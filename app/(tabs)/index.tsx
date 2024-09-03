@@ -1,52 +1,49 @@
-import { Image, StyleSheet, Platform } from 'react-native';
-
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+import React from 'react';
+import {StyleSheet, Platform } from 'react-native';
+import { Canvas, Circle, Group,useImage,Image, Blur, ColorMatrix } from '@shopify/react-native-skia';
 
 export default function HomeScreen() {
+  const width = 256;
+  const height = 256;
+  const ringSize = width * 0.2;
+
+  const colors = ['#0085CA', '#F7E300', '#EF006C', '#00A859', '#F49A3B'];
+
+  const positions = [
+    { x: width * 0.25, y: height * 0.25 },
+    { x: width * 0.50, y: height * 0.25 },
+    { x: width * 0.75, y: height * 0.25 },
+    { x: width * 0.375, y: height * 0.50 },
+    { x: width * 0.625, y: height * 0.50 },
+  ];
+  const image = useImage(require('@/assets/images/icon.png'));
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({ ios: 'cmd + d', android: 'cmd + m' })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+    <Canvas style={{ width:'100%',height:'100%' }}>
+      <Group>
+        {positions.map((pos, index) => (
+          <Circle
+            key={index}
+            cx={pos.x}
+            cy={pos.y}
+            r={ringSize}
+            color={colors[index]}
+            style="stroke"
+            strokeWidth={ringSize * 0.2}
+          />
+        ))}
+      </Group>
+      <Image image={image} fit="contain" x={0} y={300} width={256} height={256} >
+      <Blur blur={2} mode="clamp">
+          <ColorMatrix
+            matrix={[
+              -0.578, 0.99, 0.588, 0, 0, 0.469, 0.535, -0.003, 0, 0, 0.015,
+              1.69, -0.703, 0, 0, 0, 0, 0, 1, 0,
+            ]}
+          />
+        </Blur>
+      </Image>
+    </Canvas>
   );
 }
 
